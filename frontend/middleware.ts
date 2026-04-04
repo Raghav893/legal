@@ -16,6 +16,7 @@ export function middleware(request: NextRequest) {
 
   const session = request.cookies.get("legalcase_session")?.value;
 
+  const isLanding = pathname === "/";
   const isApi = pathname.startsWith("/api");
   const isLogin = pathname === "/login";
   const isSignup = pathname === "/signup";
@@ -27,8 +28,14 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (!session && !isLogin && !isSignup && !isApi) {
+  // Require login for protected routes
+  if (!session && !isLogin && !isSignup && !isLanding && !isApi) {
     return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  // Auto-redirect authenticated users to dashboard if they visit public pages
+  if (session && (isLogin || isSignup || isLanding)) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return NextResponse.next();
