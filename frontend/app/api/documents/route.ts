@@ -6,9 +6,16 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const body = await request.json();
+  const contentType = request.headers.get("content-type") || "";
+  let body: any;
+  if (contentType.includes("multipart/form-data")) {
+    body = await request.formData();
+  } else {
+    body = await request.json();
+  }
+
   return backendProxy("/documents", {
     method: "POST",
-    body: JSON.stringify(body)
+    body: body
   });
 }

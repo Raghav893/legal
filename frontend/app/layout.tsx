@@ -3,8 +3,8 @@ import { AppShell } from "@/components/app-shell";
 import type { ReactNode } from "react";
 
 export const metadata = {
-  title: "LexOra | Legal Operations Platform",
-  description: "Minimalist B2B SaaS for law firms"
+  title: "LexOra — Legal Operations Platform",
+  description: "Premium case and client management for modern law firms"
 };
 
 export default function RootLayout({

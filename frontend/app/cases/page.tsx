@@ -7,12 +7,15 @@ export default async function CasesPage() {
       id: number;
       caseNumber: string;
       title: string;
+      description?: string;
       status: string;
       courtName: string;
       judgeName: string;
       filingDate: string;
+      nextHearingDate?: string;
       clientId: number;
       clientName?: string;
+      advocateId?: number;
     }>>("/cases"),
     backendFetch<Array<{ id: number; fullName: string }>>("/clients")
   ]);

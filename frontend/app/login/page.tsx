@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+import { AuthLayout } from "@/components/auth/auth-layout";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("admin@legalcase.local");
@@ -31,68 +34,77 @@ export default function LoginPage() {
       return;
     }
 
-    setMessage("Login successful. Redirecting to dashboard...");
+    setMessage("Login successful. Redirecting…");
     router.push("/");
     router.refresh();
   }
 
   return (
-    <div className="auth-grid">
-      <section className="showcase-panel">
-        <div>
-          <p className="eyebrow">Legal practice management</p>
-          <h1 className="hero-title">Operate your law firm from one calm, structured workspace.</h1>
-          <p className="hero-copy">
-            Track matters, organize hearings, maintain client records, and keep advocates and assistants aligned in a clean B2B workflow.
-          </p>
-          <div className="showcase-metrics">
-            <div className="showcase-metric">
-              <strong>94%</strong>
-              <span className="muted small">hearing readiness coverage this quarter</span>
-            </div>
-            <div className="showcase-metric">
-              <strong>220+</strong>
-              <span className="muted small">documents centrally tracked across live matters</span>
-            </div>
-            <div className="showcase-metric">
-              <strong>18</strong>
-              <span className="muted small">advocates and assistants collaborating securely</span>
-            </div>
-            <div className="showcase-metric">
-              <strong>1</strong>
-              <span className="muted small">single source of truth for the firm operations team</span>
-            </div>
+    <AuthLayout
+      eyebrow="Welcome back"
+      title="Sign in to your workspace"
+      subtitle="Access matters, clients, hearings, and documents in one calm, structured view."
+    >
+      <CardHeader className="space-y-2 pb-2 pt-8 text-center sm:pt-10">
+        <CardTitle className="text-2xl font-semibold tracking-tight">Sign in</CardTitle>
+        <CardDescription className="text-[15px] leading-relaxed">
+          Use your firm email and password to continue.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6 px-6 pb-8 sm:px-10 sm:pb-10">
+        <form className="space-y-5" onSubmit={handleSubmit}>
+          <div className="space-y-2 text-left">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@firm.com"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="h-11 bg-white"
+            />
           </div>
-        </div>
-        <p className="muted small">
-          Built for boutique and mid-market law firms that need discipline, clarity, and secure team coordination.
-        </p>
-      </section>
+          <div className="space-y-2 text-left">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="h-11 bg-white"
+            />
+          </div>
+          <Button className="h-11 w-full rounded-[10px] text-[15px] font-semibold" type="submit" disabled={loading}>
+            {loading ? "Signing in…" : "Sign in"}
+          </Button>
+        </form>
 
-      <Card className="auth-panel">
-        <CardContent>
-          <p className="eyebrow">Sign in</p>
-          <h2 className="ui-card__title" style={{ fontSize: 32, marginBottom: 8 }}>Welcome back</h2>
-          <p className="ui-card__description" style={{ marginBottom: 24 }}>
-            Access your firm dashboard, case pipeline, hearing calendar, and document workspace.
+        <div className="space-y-4 border-t border-border/60 pt-6 text-center text-sm">
+          <p className="rounded-xl bg-muted/50 px-3 py-2.5 text-xs leading-relaxed text-muted-foreground">
+            Demo: <span className="font-medium text-foreground">admin@legalcase.local</span> /{" "}
+            <span className="font-medium text-foreground">Admin@123</span>
           </p>
-          <form className="form-grid" onSubmit={handleSubmit}>
-            <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-            <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-            <Button type="submit" disabled={loading}>
-              {loading ? "Signing In..." : "Enter Workspace"}
-            </Button>
-          </form>
-          <div style={{ marginTop: 18 }}>
-            <p className="muted small">Demo credentials</p>
-            <p className="small" style={{ margin: "6px 0 0" }}>admin@legalcase.local / Admin@123</p>
-          </div>
-          <p className="muted small" style={{ marginTop: 16 }}>
-            New to the workspace? <Link href="/signup">Create an account</Link>
+          <p className="text-muted-foreground">
+            No account?{" "}
+            <Link href="/signup" className="font-semibold text-foreground underline-offset-4 hover:underline">
+              Create one
+            </Link>
           </p>
-          {message ? <p className="muted small" style={{ marginTop: 16 }}>{message}</p> : null}
-        </CardContent>
-      </Card>
-    </div>
+          {message ? (
+            <p
+              className={
+                message.includes("successful") ? "text-sm font-medium text-emerald-700" : "text-sm font-medium text-red-600"
+              }
+            >
+              {message}
+            </p>
+          ) : null}
+        </div>
+      </CardContent>
+    </AuthLayout>
   );
 }

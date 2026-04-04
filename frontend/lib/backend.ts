@@ -21,7 +21,7 @@ export async function backendFetch<T>(path: string, init?: RequestInit): Promise
     ...init,
     cache: "no-store",
     headers: {
-      "Content-Type": "application/json",
+      ...(init?.body instanceof FormData ? {} : { "Content-Type": "application/json" }),
       ...(session?.token ? { Authorization: `Bearer ${session.token}` } : {}),
       ...(init?.headers || {})
     }
@@ -51,7 +51,7 @@ export async function backendProxy(path: string, init?: RequestInit) {
     ...init,
     cache: "no-store",
     headers: {
-      "Content-Type": "application/json",
+      ...(init?.body instanceof FormData ? {} : { "Content-Type": "application/json" }),
       Authorization: `Bearer ${session.token}`,
       ...(init?.headers || {})
     }

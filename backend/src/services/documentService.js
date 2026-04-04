@@ -15,21 +15,27 @@ async function listDocuments(ownerUserId) {
 }
 
 async function createDocument(payload, ownerUserId) {
-  const { fileName, documentType, contentType, sizeBytes, documentUrl, summary, caseId, uploadedById } = payload;
+  const { fileName, documentType, contentType, sizeBytes, documentUrl, summary, caseId, uploadedById, file } = payload;
+  
+  const finalFileName = file ? file.originalname : fileName;
+  const finalContentType = file ? file.mimetype : (contentType || "application/pdf");
+  const finalSizeBytes = file ? file.size : (sizeBytes || 0);
+  const finalDocumentUrl = file ? `/uploads/${file.filename}` : (documentUrl || null);
+
   const [result] = await pool.query(
     `INSERT INTO documents (owner_user_id, file_name, document_type, content_type, size_bytes, document_url, summary, case_id, uploaded_by_id)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [ownerUserId, fileName, documentType, contentType || "application/pdf", sizeBytes || 0, documentUrl || null, summary || null, caseId, uploadedById]
+    [ownerUserId, finalFileName, documentType, finalContentType, finalSizeBytes, finalDocumentUrl, summary || null, caseId, uploadedById]
   );
   const [[caseFile]] = await pool.query("SELECT title FROM cases WHERE id = ? LIMIT 1", [caseId]);
   const [[user]] = await pool.query("SELECT full_name FROM users WHERE id = ? LIMIT 1", [uploadedById]);
   return {
     id: result.insertId,
-    fileName,
+    fileName: finalFileName,
     documentType,
-    contentType: contentType || "application/pdf",
-    sizeBytes: sizeBytes || 0,
-    documentUrl: documentUrl || null,
+    contentType: finalContentType,
+    sizeBytes: finalSizeBytes,
+    documentUrl: finalDocumentUrl,
     summary: summary || null,
     caseId,
     uploadedById,

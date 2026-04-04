@@ -64,4 +64,41 @@ async function createCase(payload, ownerUserId) {
   };
 }
 
-module.exports = { listCases, createCase };
+async function updateCase(id, payload, ownerUserId) {
+  const { status, nextHearingDate, description } = payload;
+  const fields = [];
+  const values = [];
+
+  if (status !== undefined) { fields.push("status = ?"); values.push(status); }
+  if (nextHearingDate !== undefined) { fields.push("next_hearing_date = ?"); values.push(nextHearingDate || null); }
+  if (description !== undefined) { fields.push("description = ?"); values.push(description || null); }
+
+  if (!fields.length) return null;
+
+  values.push(id, ownerUserId);
+  await pool.query(
+    `UPDATE cases SET ${fields.join(", ")} WHERE id = ? AND owner_user_id = ?`,
+    values
+  );
+
+  const [rows] = await pool.query(`
+    SELECT c.id, c.case_number, c.title, c.description, c.court_name, c.judge_name, c.status,
+           c.filing_date, c.next_hearing_date, c.client_id, cl.full_name AS client_name,
+           c.advocate_id
+    FROM cases c
+    JOIN clients cl ON cl.id = c.client_id
+    WHERE c.id = ? AND c.owner_user_id = ? LIMIT 1
+  `, [id, ownerUserId]);
+
+  return rows[0] ? camelizeRow(rows[0]) : null;
+}
+
+async function deleteCase(id, ownerUserId) {
+  const [result] = await pool.query(
+    "DELETE FROM cases WHERE id = ? AND owner_user_id = ?",
+    [id, ownerUserId]
+  );
+  return result.affectedRows > 0;
+}
+
+module.exports = { listCases, createCase, updateCase, deleteCase };

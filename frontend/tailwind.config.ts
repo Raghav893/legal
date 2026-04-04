@@ -41,6 +41,16 @@ const config: Config = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))"
+        },
+        gold: {
+          DEFAULT: "#b8924a",
+          light: "#d4aa6a",
+          subtle: "rgba(184, 146, 74, 0.12)"
+        },
+        ink: {
+          DEFAULT: "#0a0f1e",
+          2: "#1a2035",
+          3: "#2d3a52"
         }
       },
       borderRadius: {
@@ -49,6 +59,11 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)"
       },
       keyframes: {
+        shine: {
+          "0%": { backgroundPosition: "0% 0%" },
+          "50%": { backgroundPosition: "100% 100%" },
+          "100%": { backgroundPosition: "0% 0%" }
+        },
         "accordion-down": {
           from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" }
@@ -59,6 +74,7 @@ const config: Config = {
         }
       },
       animation: {
+        shine: "shine var(--duration, 14s) infinite linear",
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out"
       }

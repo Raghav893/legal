@@ -2,8 +2,19 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const session = request.cookies.get("legalcase_session")?.value;
   const { pathname } = request.nextUrl;
+
+  // Always allow Next internals and typical static assets. If middleware runs on these
+  // (matcher edge cases in dev/prod), a redirect would return HTML instead of CSS/JS.
+  if (
+    pathname.startsWith("/_next") ||
+    pathname === "/favicon.ico" ||
+    /\.(?:ico|png|jpg|jpeg|gif|webp|svg|woff2?|ttf|eot)$/i.test(pathname)
+  ) {
+    return NextResponse.next();
+  }
+
+  const session = request.cookies.get("legalcase_session")?.value;
 
   const isApi = pathname.startsWith("/api");
   const isLogin = pathname === "/login";
@@ -24,5 +35,7 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"]
+  matcher: [
+    "/((?!_next/static|_next/image|_next/webpack-hmr|favicon.ico).*)"
+  ]
 };

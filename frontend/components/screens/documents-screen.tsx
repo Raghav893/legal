@@ -36,12 +36,10 @@ export function DocumentsScreen({
   const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("ALL");
   const [saving, setSaving] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
   const [form, setForm] = useState({
     fileName: "",
     documentType: "CASE_FILE",
-    contentType: "application/pdf",
-    sizeBytes: 102400,
-    documentUrl: "",
     summary: "",
     caseId: cases[0]?.id ?? 1,
     uploadedById: 1
@@ -66,11 +64,22 @@ export function DocumentsScreen({
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!file) {
+      alert("Please select a file to upload.");
+      return;
+    }
     setSaving(true);
+    
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("documentType", form.documentType);
+    formData.append("summary", form.summary);
+    formData.append("caseId", String(form.caseId));
+    formData.append("uploadedById", String(form.uploadedById));
+
     const response = await fetch(`${apiBase}/documents`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form)
+      body: formData
     });
     const created = await response.json();
     setDocuments((current) => [
@@ -82,7 +91,8 @@ export function DocumentsScreen({
       ...current
     ]);
     setSelectedId(created.id);
-    setForm({ ...form, fileName: "", documentUrl: "", summary: "" });
+    setForm({ ...form, fileName: "", summary: "" });
+    setFile(null);
     setSaving(false);
   }
 
@@ -107,8 +117,14 @@ export function DocumentsScreen({
           </CardHeader>
           <CardContent>
             <form className="form-grid" onSubmit={handleSubmit}>
-              <Input placeholder="File name" value={form.fileName} onChange={(e) => setForm({ ...form, fileName: e.target.value })} required />
-              <Input placeholder="Document URL (PDF, image, or hosted file)" value={form.documentUrl} onChange={(e) => setForm({ ...form, documentUrl: e.target.value })} />
+              <Input 
+                type="file" 
+                onChange={(e) => {
+                  const f = e.target.files?.[0] || null;
+                  setFile(f);
+                }} 
+                required 
+              />
               <select className="ui-select" value={form.caseId} onChange={(e) => setForm({ ...form, caseId: Number(e.target.value) })}>
                 {cases.map((entry) => (
                   <option key={entry.id} value={entry.id}>{entry.title}</option>
@@ -200,9 +216,9 @@ export function DocumentsScreen({
                     {selectedDocument.documentUrl ? (
                       selectedDocument.contentType?.startsWith("image/") ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img className="preview-frame" src={selectedDocument.documentUrl} alt={selectedDocument.fileName} />
+                        <img className="preview-frame" src={`http://localhost:4000${selectedDocument.documentUrl}`} alt={selectedDocument.fileName} />
                       ) : (
-                        <iframe className="preview-frame" src={selectedDocument.documentUrl} title={selectedDocument.fileName} />
+                        <iframe className="preview-frame" src={`http://localhost:4000${selectedDocument.documentUrl}`} title={selectedDocument.fileName} />
                       )
                     ) : (
                       <div className="preview-empty">
@@ -210,7 +226,7 @@ export function DocumentsScreen({
                       </div>
                     )}
                     {selectedDocument.documentUrl ? (
-                      <a href={selectedDocument.documentUrl} target="_blank" rel="noreferrer">
+                      <a href={`http://localhost:4000${selectedDocument.documentUrl}`} target="_blank" rel="noreferrer">
                         <Button variant="secondary">Open source document</Button>
                       </a>
                     ) : null}

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { DateTimePicker } from "@/components/ui/datetime-picker";
 import { Input } from "@/components/ui/input";
 
 const apiBase = "/api";
@@ -39,6 +40,7 @@ export function HearingsScreen({
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!form.hearingDateTime?.trim()) return;
     setSaving(true);
     const response = await fetch(`${apiBase}/hearings`, {
       method: "POST",
@@ -82,7 +84,17 @@ export function HearingsScreen({
                   <option key={entry.id} value={entry.id}>{entry.title}</option>
                 ))}
               </select>
-              <input className="ui-input" type="datetime-local" value={form.hearingDateTime} onChange={(e) => setForm({ ...form, hearingDateTime: e.target.value })} required />
+              <div>
+                <p className="eyebrow" style={{ display: "block", marginBottom: 6 }}>
+                  Hearing date &amp; time
+                </p>
+                <DateTimePicker
+                id="hearing-datetime"
+                value={form.hearingDateTime}
+                onChange={(hearingDateTime) => setForm({ ...form, hearingDateTime })}
+                required
+              />
+              </div>
               <Input placeholder="Courtroom" value={form.courtroom} onChange={(e) => setForm({ ...form, courtroom: e.target.value })} required />
               <Input placeholder="Agenda" value={form.agenda} onChange={(e) => setForm({ ...form, agenda: e.target.value })} required />
               <Button type="submit" disabled={saving}>{saving ? "Saving..." : "Add Hearing"}</Button>
