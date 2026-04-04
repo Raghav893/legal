@@ -37,8 +37,8 @@ export default function SignupPage() {
       return;
     }
 
-    setMessage("Account created. Redirecting to sign in…");
-    setTimeout(() => router.push("/login"), 1000);
+    setMessage("Account created. Redirecting to dashboard…");
+    setTimeout(() => router.push("/dashboard"), 1000);
   }
 
   return (

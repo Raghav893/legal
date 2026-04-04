@@ -11,8 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("admin@legalcase.local");
-  const [password, setPassword] = useState("Admin@123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -35,7 +35,7 @@ export default function LoginPage() {
     }
 
     setMessage("Login successful. Redirecting…");
-    router.push("/");
+    router.push("/dashboard");
     router.refresh();
   }
 
@@ -84,10 +84,6 @@ export default function LoginPage() {
         </form>
 
         <div className="space-y-4 border-t border-border/60 pt-6 text-center text-sm">
-          <p className="rounded-xl bg-muted/50 px-3 py-2.5 text-xs leading-relaxed text-muted-foreground">
-            Demo: <span className="font-medium text-foreground">admin@legalcase.local</span> /{" "}
-            <span className="font-medium text-foreground">Admin@123</span>
-          </p>
           <p className="text-muted-foreground">
             No account?{" "}
             <Link href="/signup" className="font-semibold text-foreground underline-offset-4 hover:underline">
