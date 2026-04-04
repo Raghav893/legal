@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -86,6 +87,9 @@ export default function LoginPage() {
             <p className="muted small">Demo credentials</p>
             <p className="small" style={{ margin: "6px 0 0" }}>admin@legalcase.local / Admin@123</p>
           </div>
+          <p className="muted small" style={{ marginTop: 16 }}>
+            New to the workspace? <Link href="/signup">Create an account</Link>
+          </p>
           {message ? <p className="muted small" style={{ marginTop: 16 }}>{message}</p> : null}
         </CardContent>
       </Card>

@@ -7,17 +7,19 @@ export function middleware(request: NextRequest) {
 
   const isApi = pathname.startsWith("/api");
   const isLogin = pathname === "/login";
+  const isSignup = pathname === "/signup";
   const isPublicApi = pathname.startsWith("/api/auth/login");
+  const isRegisterApi = pathname.startsWith("/api/auth/register");
 
-  if (isPublicApi) {
+  if (isPublicApi || isRegisterApi) {
     return NextResponse.next();
   }
 
-  if (!session && !isLogin && !isApi) {
+  if (!session && !isLogin && !isSignup && !isApi) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (session && isLogin) {
+  if (session && (isLogin || isSignup)) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 

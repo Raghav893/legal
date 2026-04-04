@@ -55,6 +55,16 @@
       "sizeBytes": 245760,
       "uploadedById": 1,
       "uploadedAt": "2026-04-04T09:30:00.000Z"
+    },
+    {
+      "id": 2,
+      "uploadedAt": "2026-04-04T09:01:29.008Z",
+      "fileName": "ss",
+      "documentType": "AGREEMENT",
+      "contentType": "application/pdf",
+      "sizeBytes": 102400,
+      "caseId": 1,
+      "uploadedById": 1
     }
   ]
 }

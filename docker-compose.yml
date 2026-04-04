@@ -1,11 +1,48 @@
 services:
+  mysql:
+    image: mysql:8.4
+    container_name: legal-case-mysql
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-legal_case_db}
+      MYSQL_USER: ${MYSQL_USER:-legal_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-legal_password}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_password}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "3306:3306"
+
+  backend:
+    build:
+      context: ./backend
+    container_name: legal-case-backend
+    depends_on:
+      - mysql
+    environment:
+      PORT: 4000
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ${MYSQL_DATABASE:-legal_case_db}
+      DB_USER: ${MYSQL_USER:-legal_user}
+      DB_PASSWORD: ${MYSQL_PASSWORD:-legal_password}
+      JWT_SECRET: ${APP_JWT_SECRET}
+      CORS_ORIGIN: http://localhost:3000
+    ports:
+      - "4000:4000"
+
   frontend:
     build:
       context: ./frontend
     container_name: legal-case-frontend
+    depends_on:
+      - backend
     environment:
       APP_JWT_SECRET: ${APP_JWT_SECRET}
-    volumes:
-      - ./frontend/data:/app/data
+      BACKEND_INTERNAL_URL: http://backend:4000/api
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:4000/api
     ports:
       - "3000:3000"
+
+volumes:
+  mysql_data:
