@@ -1,0 +1,60 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "fullName": "System Administrator",
+      "email": "admin@legalcase.local",
+      "password": "Admin@123",
+      "role": "ADMIN"
+    }
+  ],
+  "clients": [
+    {
+      "id": 1,
+      "fullName": "Acme Corp",
+      "email": "legal@acme.com",
+      "phone": "9999999999",
+      "address": "Bangalore",
+      "companyName": "Acme",
+      "notes": "Priority litigation client"
+    }
+  ],
+  "cases": [
+    {
+      "id": 1,
+      "caseNumber": "CIV-2026-1001",
+      "title": "Acme Corp vs Horizon Logistics",
+      "description": "Commercial dispute over service delays and damages.",
+      "courtName": "High Court",
+      "judgeName": "Justice Sharma",
+      "status": "OPEN",
+      "filingDate": "2026-03-14",
+      "nextHearingDate": "2026-04-06",
+      "clientId": 1,
+      "advocateId": 1
+    }
+  ],
+  "hearings": [
+    {
+      "id": 1,
+      "caseId": 1,
+      "hearingDateTime": "2026-04-06T11:00:00",
+      "courtroom": "Court Hall 2",
+      "agenda": "Interim relief hearing",
+      "outcome": "",
+      "reminderSent": false
+    }
+  ],
+  "documents": [
+    {
+      "id": 1,
+      "caseId": 1,
+      "fileName": "Interim_Application.pdf",
+      "documentType": "CASE_FILE",
+      "contentType": "application/pdf",
+      "sizeBytes": 245760,
+      "uploadedById": 1,
+      "uploadedAt": "2026-04-04T09:30:00.000Z"
+    }
+  ]
+}

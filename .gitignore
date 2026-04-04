@@ -1,0 +1,7 @@
+backend/target/
+frontend/.next/
+frontend/node_modules/
+.idea/
+.vscode/
+.env
+backend/uploads/

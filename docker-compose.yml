@@ -1,0 +1,11 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+    container_name: legal-case-frontend
+    environment:
+      APP_JWT_SECRET: ${APP_JWT_SECRET}
+    volumes:
+      - ./frontend/data:/app/data
+    ports:
+      - "3000:3000"
