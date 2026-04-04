@@ -8,6 +8,7 @@ const hearingRoutes = require("./routes/hearingRoutes");
 const documentRoutes = require("./routes/documentRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const { errorHandler } = require("./middleware/errorHandler");
+const { authMiddleware } = require("./middleware/authMiddleware");
 
 const app = express();
 
@@ -19,11 +20,11 @@ app.use(express.json());
 
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
 app.use("/api/auth", authRoutes);
-app.use("/api/clients", clientRoutes);
-app.use("/api/cases", caseRoutes);
-app.use("/api/hearings", hearingRoutes);
-app.use("/api/documents", documentRoutes);
-app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/clients", authMiddleware, clientRoutes);
+app.use("/api/cases", authMiddleware, caseRoutes);
+app.use("/api/hearings", authMiddleware, hearingRoutes);
+app.use("/api/documents", authMiddleware, documentRoutes);
+app.use("/api/dashboard", authMiddleware, dashboardRoutes);
 app.use(errorHandler);
 
 module.exports = app;

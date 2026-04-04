@@ -5,7 +5,15 @@ const secret = new TextEncoder().encode(
   process.env.APP_JWT_SECRET || "replace-this-in-production"
 );
 
-export async function createSession(payload: { email: string; role: string; fullName: string }) {
+export type SessionPayload = {
+  id: number;
+  email: string;
+  role: string;
+  fullName: string;
+  token: string;
+};
+
+export async function createSession(payload: SessionPayload) {
   const token = await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
@@ -26,7 +34,7 @@ export async function getSession() {
   if (!token) return null;
   try {
     const verified = await jwtVerify(token, secret);
-    return verified.payload as { email: string; role: string; fullName: string };
+    return verified.payload as SessionPayload;
   } catch {
     return null;
   }

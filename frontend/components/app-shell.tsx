@@ -6,19 +6,27 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { LogoutButton } from "@/components/logout-button";
 
-const navItems = [
-  { href: "/", label: "Dashboard" },
-  { href: "/clients", label: "Clients" },
-  { href: "/cases", label: "Matters" },
-  { href: "/hearings", label: "Hearings" },
-  { href: "/documents", label: "Documents" }
+const navGroups = [
+  {
+    title: "Overview",
+    items: [{ href: "/", label: "Dashboard", accent: "A" }]
+  },
+  {
+    title: "Operations",
+    items: [
+      { href: "/clients", label: "Clients", accent: "C" },
+      { href: "/cases", label: "Matters", accent: "M" },
+      { href: "/hearings", label: "Hearings", accent: "H" },
+      { href: "/documents", label: "Documents", accent: "D" }
+    ]
+  }
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const isLogin = pathname === "/login";
+  const isAuthRoute = pathname === "/login" || pathname === "/signup";
 
-  if (isLogin) {
+  if (isAuthRoute) {
     return <div className="auth-layout">{children}</div>;
   }
 
@@ -32,19 +40,32 @@ export function AppShell({ children }: { children: ReactNode }) {
             <h1>LexOra</h1>
           </div>
         </div>
+        <div className="sidebar-panel">
+          <p className="eyebrow">Private workspace</p>
+          <p className="muted small">Your clients, matters, documents, and hearings stay isolated to your account.</p>
+        </div>
         <nav className="side-nav">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn("side-nav__item", pathname === item.href && "side-nav__item--active")}
-            >
-              {item.label}
-            </Link>
+          {navGroups.map((group) => (
+            <div key={group.title} className="side-nav__group">
+              <p className="side-nav__heading">{group.title}</p>
+              {group.items.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn("side-nav__item", pathname === item.href && "side-nav__item--active")}
+                >
+                  <span className="side-nav__icon">{item.accent}</span>
+                  <span>{item.label}</span>
+                </Link>
+              ))}
+            </div>
           ))}
         </nav>
         <div className="sidebar-footer">
-          <p className="muted small">Designed for advocates, partners, and legal ops teams.</p>
+          <div className="sidebar-panel sidebar-panel--footer">
+            <p className="eyebrow">Operational mode</p>
+            <p className="muted small">Designed for advocates, partners, and legal ops teams.</p>
+          </div>
           <LogoutButton />
         </div>
       </aside>

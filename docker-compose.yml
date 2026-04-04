@@ -11,7 +11,7 @@ services:
       - mysql_data:/var/lib/mysql
       - ./backend/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     ports:
-      - "3306:3306"
+      - "3307:3306"
 
   backend:
     build:
@@ -26,7 +26,7 @@ services:
       DB_NAME: ${MYSQL_DATABASE:-legal_case_db}
       DB_USER: ${MYSQL_USER:-legal_user}
       DB_PASSWORD: ${MYSQL_PASSWORD:-legal_password}
-      JWT_SECRET: ${APP_JWT_SECRET}
+      JWT_SECRET: ${APP_JWT_SECRET:-replace-this-in-production}
       CORS_ORIGIN: http://localhost:3000
     ports:
       - "4000:4000"
@@ -38,7 +38,7 @@ services:
     depends_on:
       - backend
     environment:
-      APP_JWT_SECRET: ${APP_JWT_SECRET}
+      APP_JWT_SECRET: ${APP_JWT_SECRET:-replace-this-in-production}
       BACKEND_INTERNAL_URL: http://backend:4000/api
       NEXT_PUBLIC_API_BASE_URL: http://localhost:4000/api
     ports:

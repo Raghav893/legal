@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
-const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000/api";
+const apiBase = "/api";
 
 type CaseEntry = {
   id: number;

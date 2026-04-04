@@ -3,9 +3,9 @@ const { getSummary } = require("../services/dashboardService");
 
 const router = express.Router();
 
-router.get("/summary", async (_req, res, next) => {
+router.get("/summary", async (req, res, next) => {
   try {
-    res.json(await getSummary());
+    res.json(await getSummary(req.user.id));
   } catch (error) {
     next(error);
   }

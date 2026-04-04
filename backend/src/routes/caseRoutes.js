@@ -3,9 +3,9 @@ const { createCase, listCases } = require("../services/caseService");
 
 const router = express.Router();
 
-router.get("/", async (_req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
-    res.json(await listCases());
+    res.json(await listCases(req.user.id));
   } catch (error) {
     next(error);
   }
@@ -13,7 +13,7 @@ router.get("/", async (_req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    res.status(201).json(await createCase(req.body));
+    res.status(201).json(await createCase(req.body, req.user.id));
   } catch (error) {
     next(error);
   }

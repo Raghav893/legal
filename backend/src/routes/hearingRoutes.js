@@ -3,9 +3,9 @@ const { createHearing, listHearings } = require("../services/hearingService");
 
 const router = express.Router();
 
-router.get("/", async (_req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
-    res.json(await listHearings());
+    res.json(await listHearings(req.user.id));
   } catch (error) {
     next(error);
   }
@@ -13,7 +13,7 @@ router.get("/", async (_req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    res.status(201).json(await createHearing(req.body));
+    res.status(201).json(await createHearing(req.body, req.user.id));
   } catch (error) {
     next(error);
   }

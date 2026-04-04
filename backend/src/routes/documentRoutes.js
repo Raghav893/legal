@@ -3,9 +3,9 @@ const { createDocument, listDocuments } = require("../services/documentService")
 
 const router = express.Router();
 
-router.get("/", async (_req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
-    res.json(await listDocuments());
+    res.json(await listDocuments(req.user.id));
   } catch (error) {
     next(error);
   }
@@ -13,7 +13,7 @@ router.get("/", async (_req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    res.status(201).json(await createDocument(req.body));
+    res.status(201).json(await createDocument(req.body, req.user.id));
   } catch (error) {
     next(error);
   }

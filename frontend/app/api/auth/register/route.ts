@@ -17,9 +17,11 @@ export async function POST(request: Request) {
   }
 
   await createSession({
+    id: payload.id,
     email: payload.email,
     role: payload.role,
-    fullName: payload.fullName
+    fullName: payload.fullName,
+    token: payload.token
   });
 
   return NextResponse.json(payload, { status: 201 });

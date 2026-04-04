@@ -3,9 +3,9 @@ const { createClient, listClients } = require("../services/clientService");
 
 const router = express.Router();
 
-router.get("/", async (_req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
-    res.json(await listClients());
+    res.json(await listClients(req.user.id));
   } catch (error) {
     next(error);
   }
@@ -13,7 +13,7 @@ router.get("/", async (_req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    res.status(201).json(await createClient(req.body));
+    res.status(201).json(await createClient(req.body, req.user.id));
   } catch (error) {
     next(error);
   }
