@@ -43,6 +43,16 @@ services:
       NEXT_PUBLIC_API_BASE_URL: http://localhost:4000/api
     ports:
       - "3000:3000"
+  nginx:
+    image: nginx:alpine
+    container_name: legal-case-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - backend
 
 volumes:
   mysql_data:
