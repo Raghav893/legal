@@ -38,7 +38,7 @@ export default function SignupPage() {
     }
 
     setMessage("Account created. Redirecting to dashboard…");
-    setTimeout(() => router.push("/dashboard"), 1000);
+    setTimeout(() => { window.location.href = "/dashboard"; }, 1000);
   }
 
   return (
