@@ -35,8 +35,7 @@ export default function LoginPage() {
     }
 
     setMessage("Login successful. Redirecting…");
-    router.push("/dashboard");
-    router.refresh();
+    window.location.href = "/dashboard";
   }
 
   return (
