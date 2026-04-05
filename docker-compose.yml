@@ -7,6 +7,11 @@ services:
       MYSQL_USER: ${MYSQL_USER:-legal_user}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-legal_password}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_password}
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root_password}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - mysql_data:/var/lib/mysql
       - ./backend/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
@@ -18,7 +23,8 @@ services:
       context: ./backend
     container_name: legal-case-backend
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     environment:
       PORT: 4000
       DB_HOST: mysql
