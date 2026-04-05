@@ -22,6 +22,7 @@ export async function createSession(payload: SessionPayload) {
 
   cookies().set("legalcase_session", token, {
     httpOnly: true,
+    secure: false,
     sameSite: "lax",
     path: "/"
   });
