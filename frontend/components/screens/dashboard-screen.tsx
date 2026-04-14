@@ -150,7 +150,7 @@ export function DashboardScreen({ data }: { data: DashboardData }) {
                   <tr key={hearing.id}>
                     <td>{hearing.caseNumber}</td>
                     <td>{hearing.caseTitle}</td>
-                    <td>{new Date(hearing.hearingDateTime).toLocaleString()}</td>
+                    <td>{new Date(hearing.hearingDateTime).toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}</td>
                     <td><Badge variant="warning">{hearing.courtroom}</Badge></td>
                   </tr>
                 ))}

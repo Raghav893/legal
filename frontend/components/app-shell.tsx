@@ -2,9 +2,17 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
+import type { User } from "@supabase/supabase-js";
+
+const ROLES = [
+  { value: "advocate", label: "Advocate", description: "Handles cases in court" },
+  { value: "paralegal", label: "Paralegal", description: "Supports case preparation" },
+  { value: "admin", label: "Administrator", description: "Full platform access" },
+  { value: "clerk", label: "Clerk", description: "Document and record management" },
+];
 
 const navGroups = [
   {
@@ -25,7 +33,13 @@ const navGroups = [
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+  }, []);
+
   // Routes that shouldn't show the sidebar workspace UI
   const isAuthRoute = pathname === "/login" || pathname === "/signup";
   const isLandingRoute = pathname === "/";
@@ -89,10 +103,18 @@ export function AppShell({ children }: { children: ReactNode }) {
         {/* Footer */}
         <div className="sidebar-footer">
           <div className="sidebar-user">
-            <div className="sidebar-user__avatar">A</div>
-            <div>
-              <p className="sidebar-user__name">Administrator</p>
-              <p className="sidebar-user__role">Admin — Full access</p>
+            <div className="sidebar-user__avatar">
+              {(user?.user_metadata?.full_name || user?.email || "?")[0].toUpperCase()}
+            </div>
+            <div style={{ minWidth: 0 }}>
+              <p className="sidebar-user__name" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Loading..."}
+              </p>
+              <p className="sidebar-user__role">
+                {ROLES.find(r => r.value === (user?.user_metadata?.role ?? "advocate"))?.label ?? "Advocate"}
+                {" — "}
+                {ROLES.find(r => r.value === (user?.user_metadata?.role ?? "advocate"))?.description ?? "Handles cases in court"}
+              </p>
             </div>
           </div>
           <button className="sidebar-signout" onClick={handleSignOut}>

@@ -121,7 +121,7 @@ export function HearingsScreen({
                 {hearings.map((hearing) => (
                   <tr key={hearing.id}>
                     <td>{hearing.caseTitle || "-"}</td>
-                    <td>{hearing.hearingDateTime.replace("T", " ").slice(0, 16)}</td>
+                    <td>{new Date(hearing.hearingDateTime).toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}</td>
                     <td><Badge variant="warning">{hearing.courtroom}</Badge></td>
                     <td>{hearing.agenda}</td>
                   </tr>
