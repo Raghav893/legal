@@ -1,27 +1,23 @@
-import { backendFetch } from "@/lib/backend";
+import { createClient } from "@/utils/supabase/server";
 import { DocumentsScreen } from "@/components/screens/documents-screen";
 
 export default async function DocumentsPage() {
-  const [documents, cases] = await Promise.all([
-    backendFetch<Array<{
-      id: number;
-      fileName: string;
-      documentType: string;
-      contentType?: string;
-      sizeBytes?: number;
-      documentUrl?: string;
-      summary?: string;
-      caseId: number;
-      caseTitle?: string;
-      uploadedByName?: string;
-    }>>("/documents"),
-    backendFetch<Array<{ id: number; title: string }>>("/cases")
+  const supabase = createClient();
+  const [{ data: documents }, { data: cases }] = await Promise.all([
+    supabase.from('documents').select('*, cases:caseId(title), profiles:uploadedBy(fullName)'),
+    supabase.from('cases').select('id, title')
   ]);
+
+  const formattedDocuments = (documents || []).map(d => ({
+    ...d,
+    caseTitle: d.cases?.title || '',
+    uploadedByName: d.profiles?.fullName || ''
+  }));
 
   return (
     <DocumentsScreen
-      initialDocuments={documents}
-      cases={cases.map((entry) => ({ id: entry.id, title: entry.title }))}
+      initialDocuments={formattedDocuments}
+      cases={(cases || []).map((entry: any) => ({ id: entry.id, title: entry.title }))}
     />
   );
 }

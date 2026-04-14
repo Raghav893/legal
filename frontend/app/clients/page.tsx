@@ -1,15 +1,8 @@
-import { backendFetch } from "@/lib/backend";
+import { createClient } from "@/utils/supabase/server";
 import { ClientsScreen } from "@/components/screens/clients-screen";
 
 export default async function ClientsPage() {
-  const clients = await backendFetch<Array<{
-    id: number;
-    fullName: string;
-    email: string;
-    phone: string;
-    address: string;
-    companyName?: string;
-    notes?: string;
-  }>>("/clients");
-  return <ClientsScreen initialClients={clients} />;
+  const supabase = createClient();
+  const { data: clients } = await supabase.from('clients').select('*');
+  return <ClientsScreen initialClients={clients || []} />;
 }

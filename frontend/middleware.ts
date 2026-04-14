@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { updateSession } from "@/utils/supabase/middleware";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Always allow Next internals and typical static assets. If middleware runs on these
-  // (matcher edge cases in dev/prod), a redirect would return HTML instead of CSS/JS.
   if (
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico" ||
@@ -14,31 +13,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const session = request.cookies.get("legalcase_session")?.value;
-
-  const isLanding = pathname === "/";
-  const isApi = pathname.startsWith("/api");
-  const isLogin = pathname === "/login";
-  const isSignup = pathname === "/signup";
-  const isPublicApi = pathname.startsWith("/api/auth/login");
-  const isRegisterApi = pathname.startsWith("/api/auth/register");
-  const isLogoutApi = pathname.startsWith("/api/auth/logout");
-
-  if (isPublicApi || isRegisterApi || isLogoutApi) {
-    return NextResponse.next();
-  }
-
-  // Require login for protected routes
-  if (!session && !isLogin && !isSignup && !isLanding && !isApi) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  // Auto-redirect authenticated users to dashboard if they visit public pages
-  if (session && (isLogin || isSignup || isLanding)) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
-
-  return NextResponse.next();
+  return await updateSession(request);
 }
 
 export const config = {

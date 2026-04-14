@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { createClient } from "@/utils/supabase/client";
 
 const navGroups = [
   {
@@ -30,7 +31,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   const isLandingRoute = pathname === "/";
 
   async function handleSignOut() {
-    await fetch("/api/auth/logout", { method: "POST" });
+    const supabase = createClient();
+    await supabase.auth.signOut();
     router.push("/login");
     router.refresh();
   }

@@ -1,20 +1,16 @@
-import { backendFetch } from "@/lib/backend";
 import { DashboardScreen } from "@/components/screens/dashboard-screen";
+import { createClient } from "@/utils/supabase/server";
 
 export default async function DashboardPage() {
-  const data = await backendFetch<{
-    totalClients: number;
-    activeCases: number;
-    closedCases: number;
-    upcomingHearingsCount: number;
-    upcomingHearings: Array<{
-      id: number;
-      caseNumber: string;
-      caseTitle: string;
-      hearingDateTime: string;
-      courtroom: string;
-    }>;
-  }>("/dashboard/summary");
+  const supabase = createClient();
+  // TODO: Fetch dashboard summary from Supabase
+  const data = {
+    totalClients: 0,
+    activeCases: 0,
+    closedCases: 0,
+    upcomingHearingsCount: 0,
+    upcomingHearings: [],
+  };
   
   return <DashboardScreen data={data} />;
 }

@@ -1,23 +1,22 @@
-import { backendFetch } from "@/lib/backend";
+import { createClient } from "@/utils/supabase/server";
 import { HearingsScreen } from "@/components/screens/hearings-screen";
 
 export default async function HearingsPage() {
-  const [hearings, cases] = await Promise.all([
-    backendFetch<Array<{
-      id: number;
-      caseId: number;
-      caseTitle?: string;
-      hearingDateTime: string;
-      courtroom: string;
-      agenda: string;
-    }>>("/hearings"),
-    backendFetch<Array<{ id: number; title: string }>>("/cases")
+  const supabase = createClient();
+  const [{ data: hearings }, { data: cases }] = await Promise.all([
+    supabase.from('hearings').select('*, cases:caseId(title)'),
+    supabase.from('cases').select('id, title')
   ]);
+
+  const formattedHearings = (hearings || []).map(h => ({
+    ...h,
+    caseTitle: h.cases?.title || ''
+  }));
 
   return (
     <HearingsScreen
-      initialHearings={hearings}
-      cases={cases.map((entry) => ({ id: entry.id, title: entry.title }))}
+      initialHearings={formattedHearings}
+      cases={(cases || []).map((entry: any) => ({ id: entry.id, title: entry.title }))}
     />
   );
 }

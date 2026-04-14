@@ -216,9 +216,9 @@ export function DocumentsScreen({
                     {selectedDocument.documentUrl ? (
                       selectedDocument.contentType?.startsWith("image/") ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img className="preview-frame" src={`http://localhost:4000${selectedDocument.documentUrl}`} alt={selectedDocument.fileName} />
+                        <img className="preview-frame" src={selectedDocument.documentUrl} alt={selectedDocument.fileName} />
                       ) : (
-                        <iframe className="preview-frame" src={`http://localhost:4000${selectedDocument.documentUrl}`} title={selectedDocument.fileName} />
+                        <iframe className="preview-frame" src={selectedDocument.documentUrl} title={selectedDocument.fileName} />
                       )
                     ) : (
                       <div className="preview-empty">
@@ -226,7 +226,7 @@ export function DocumentsScreen({
                       </div>
                     )}
                     {selectedDocument.documentUrl ? (
-                      <a href={`http://localhost:4000${selectedDocument.documentUrl}`} target="_blank" rel="noreferrer">
+                      <a href={selectedDocument.documentUrl} target="_blank" rel="noreferrer">
                         <Button variant="secondary">Open source document</Button>
                       </a>
                     ) : null}

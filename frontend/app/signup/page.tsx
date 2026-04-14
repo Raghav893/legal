@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { createClient } from "@/utils/supabase/client";
 
 export default function SignupPage() {
   const [fullName, setFullName] = useState("");
@@ -24,15 +25,21 @@ export default function SignupPage() {
     setLoading(true);
     setMessage("");
 
-    const response = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fullName, email, password, role: "admin", firmName })
+    const supabase = createClient();
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+          role: "ADMIN",
+          firm_name: firmName,
+        }
+      }
     });
 
-    if (!response.ok) {
-      const data = await response.json();
-      setMessage(data.message || "Registration failed");
+    if (error) {
+      setMessage(error.message || "Registration failed");
       setLoading(false);
       return;
     }
@@ -116,7 +123,7 @@ export default function SignupPage() {
             </Link>
           </p>
           {message ? (
-            <p
+             <p
               className={
                 message.includes("created") ? "text-sm font-medium text-emerald-700" : "text-sm font-medium text-red-600"
               }
