@@ -91,3 +91,45 @@ export async function POST(request: Request) {
     { status: 201 }
   );
 }
+
+export async function DELETE(request: Request) {
+  const supabase = createClient();
+
+  const { id } = await request.json() as { id: number };
+  if (!id) return NextResponse.json({ error: "Missing document id" }, { status: 400 });
+
+  // Fetch the document to get the storage path from its URL
+  const { data: doc, error: fetchError } = await supabase
+    .from("documents")
+    .select("id, documentUrl")
+    .eq("id", id)
+    .single();
+
+  if (fetchError || !doc) {
+    return NextResponse.json({ error: "Document not found" }, { status: 404 });
+  }
+
+  // Derive the storage path — it's the last segment of the public URL
+  if (doc.documentUrl) {
+    const storagePath = decodeURIComponent(doc.documentUrl.split("/").pop() ?? "");
+    if (storagePath) {
+      const { error: storageError } = await supabase.storage
+        .from("documents")
+        .remove([storagePath]);
+      if (storageError) {
+        console.error("[documents] Storage delete failed:", storageError.message);
+        // Non-fatal — continue to delete the DB row
+      }
+    }
+  }
+
+  // Delete the DB row
+  const { error: dbError } = await supabase.from("documents").delete().eq("id", id);
+  if (dbError) {
+    console.error("[documents] DB delete failed:", dbError.message);
+    return NextResponse.json({ error: dbError.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true });
+}
+

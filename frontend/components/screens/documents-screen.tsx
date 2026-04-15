@@ -32,10 +32,11 @@ export function DocumentsScreen({
   cases: CaseOption[];
 }) {
   const [documents, setDocuments] = useState(initialDocuments);
-  const [selectedId, setSelectedId] = useState(initialDocuments[0]?.id ?? null);
+  const [selectedId, setSelectedId] = useState<number | null>(initialDocuments[0]?.id ?? null);
   const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("ALL");
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [form, setForm] = useState({
     fileName: "",
@@ -98,6 +99,24 @@ export function DocumentsScreen({
     setForm({ ...form, fileName: "", summary: "" });
     setFile(null);
     setSaving(false);
+  }
+
+  async function handleDelete(doc: DocumentEntry) {
+    if (!confirm(`Delete "${doc.fileName}"? This cannot be undone.`)) return;
+    setDeleting(true);
+    const response = await fetch(`${apiBase}/documents`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: doc.id }),
+    });
+    if (response.ok) {
+      setDocuments((current) => current.filter((d) => d.id !== doc.id));
+      setSelectedId((prev) => (prev === doc.id ? null : prev));
+    } else {
+      const err = await response.json();
+      alert(`Delete failed: ${err.error ?? "Unknown error"}`);
+    }
+    setDeleting(false);
   }
 
   return (
@@ -230,11 +249,20 @@ export function DocumentsScreen({
                         <p className="muted">No preview URL was added for this document.</p>
                       </div>
                     )}
-                    {selectedDocument.documentUrl ? (
-                      <a href={selectedDocument.documentUrl} target="_blank" rel="noreferrer">
-                        <Button variant="secondary">Open source document</Button>
-                      </a>
-                    ) : null}
+                    <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                      {selectedDocument.documentUrl ? (
+                        <a href={selectedDocument.documentUrl} target="_blank" rel="noreferrer">
+                          <Button variant="secondary">Open source document</Button>
+                        </a>
+                      ) : null}
+                      <Button
+                        variant="destructive"
+                        disabled={deleting}
+                        onClick={() => handleDelete(selectedDocument)}
+                      >
+                        {deleting ? "Deleting..." : "Delete document"}
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               ) : (

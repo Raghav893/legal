@@ -1,6 +1,8 @@
 import { createClient } from "@/utils/supabase/server";
 import { CasesScreen } from "@/components/screens/cases-screen";
 
+export const dynamic = "force-dynamic";
+
 export default async function CasesPage() {
   const supabase = createClient();
   const [{ data: cases }, { data: clients }] = await Promise.all([

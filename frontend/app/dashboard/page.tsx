@@ -1,6 +1,8 @@
 import { DashboardScreen } from "@/components/screens/dashboard-screen";
 import { createClient } from "@/utils/supabase/server";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardPage() {
   const supabase = createClient();
   const now = new Date().toISOString();
