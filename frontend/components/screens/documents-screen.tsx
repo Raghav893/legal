@@ -68,6 +68,10 @@ export function DocumentsScreen({
       alert("Please select a file to upload.");
       return;
     }
+    if (file.type !== "application/pdf") {
+      alert("Only PDF files are allowed. Please select a .pdf file.");
+      return;
+    }
     setSaving(true);
     
     const formData = new FormData();
@@ -118,7 +122,8 @@ export function DocumentsScreen({
           <CardContent>
             <form className="form-grid" onSubmit={handleSubmit}>
               <Input 
-                type="file" 
+                type="file"
+                accept="application/pdf"
                 onChange={(e) => {
                   const f = e.target.files?.[0] || null;
                   setFile(f);
